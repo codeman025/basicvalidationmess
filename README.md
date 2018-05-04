@@ -1,18 +1,75 @@
-# basicvalidationmess
-Project Instructions: 
-For this project, you will use HTML, CSS, and JavaScript in order to create a dynamic webpage that meets specific requirements. Specifically, you are to create a JavaScript file (validate.js) that will successfully validate the input fields without altering the html file (except to test). The goal of this exercise is to get you more familiar with events and working under specific requirements. Sometimes clients want things handled a specific way. In this case, we are providing validation that applies to input elements based on their classes. This means the JavaScript file can be used on multiple pages and still work as long as proper convention is followed.
-You will be provided with a basicvalidation.html file that you will use to create this project. This HTML file should not be modified – your code should work with this file. Make sure to name your JavaScript file appropriately in order for it to work with the HTML file. 
-Upload your JS file (and CSS file if you create one) to a new Git repository in the cycle group named <your_name>_form_validation. Do not upload the HTML file - your code should work with the default HTML file provided, which the instructors will use to verify your work.
-Requirements:
-Validation will be determined by the element's class.
-Required: Must have a value that is not empty or whitespaces (" ").
-Numeric: If a value is provided, it must be a series of numbers.
-Required_Size: If a value is provided, it must be X characters long. X is determined by the maxlength attribute for the element. If there is no maxlength attribute, the field can be considered invalid immediately.
-No validation libraries are used.
-Class names used are; required, numeric, required_size.
-Tests:
-If validation fails, display a status message at the top of the form stating which elements are invalid, and prevent the form from submitting. If the validation passes, allow the page to submit (You will know the page submits when the URL in the address bar changes).
-Add additional inputs with any combination of classes and verify they validate without altering the JavaScript file.
-Add an additional form with inputs and verify that submitting it only validates that form's inputs.
-Verify that the functionality works on the latest versions of Chrome and Firefox.
-Class names grouped together in html tags should provide chained validation.
+window.onload = () => {//loads on start, lambda function
+    let submits = document.getElementsByName("submitBtn");//makes an object of submit buttons
+    for (let i = 0; i < submits.length; i++) {//scaleable for additional forms
+        submits[i].addEventListener("click", (event) => {//adds click event
+            if (validateForm(event) == true) { // if event is false, then the page can refresh
+                event.submit();
+            }
+            event.preventDefault();//prevents sumbit
+        });
+    } console.log("whats happening");
+} 
+
+function errors (form) {
+    for (let a = 0; a < document.getElementsByClassName("errors").length; a++) {// gets the elements named errors (currently 2)
+        if (document.getElementsByClassName("errors")[a].parentElement === form) { //gets the parent to differentiate the forms
+            return document.getElementsByClassName("errors")[a];//gets the right form
+        }
+    }
+}
+
+function validateForm(event){ 
+    let btn = event.target.parentElement.parentElement;
+    errors(btn.parentElement).textContent = "";
+    let numErrors = numeric(btn) + required(btn) + required_size(btn);
+    console.log("not populating");
+    return numErrors;
+    
+}
+
+
+function required_size(btn){ // gets the maxlength and runs a function that 
+    let size = document.getElementByClassName("required_size"); 
+    a = 0;
+    for(let i = 0; i < size.length; i++){
+        if (size[i].hasAttribute("maxlength")) {
+            if(size[i].value != ""){
+                let length = size[i].getAttribute("maxlength");
+                if (size[i].value.length != parseInt(length)) {
+                    errors(btn.parentElement).textContent += size[1].name + 
+                    " this field needs "+ length + " characters ";
+                    a++;
+                }
+            }
+        }
+        return a; // a is a text off errors
+    }
+    
+
+function numeric (btn){
+    let num = document.getElementByClassName("numeric"); //gets an array called num, iterates through checking it to see if its numeric
+    a = 0;
+    for(let i = 0; i < num.length; i++){//iterates through the fields that are numeric
+        if (num[i].hasAttribute("numeric")) {
+            if(num[i].value == NaN){//if the value is not a number (nan return this error field)
+                    errors(btn.parentElement).textContent += size[i].name + 
+                    " this field needs to be numbers ";
+                    a++;
+                }
+            }
+        }
+        return a; // a is a text off errors
+    }
+function required(btn){
+    let req = document.getElementByClassName("required"); 
+    a = 0;
+    for(let i = 0; i < req.length; i++){//iterates through array of required material
+        if(size[i].value != ""){
+            errors(btn.parentElement).textContent += req[i].name + 
+                " this field is required ";
+                a++;
+            }
+        }return a; // a is a text off error
+    }
+    }
+
